@@ -4,7 +4,6 @@ OTT search that actually listens. Real AI plot knowledge, not keyword guessing.
 
 ![Forgot the name demo](docs/forgot-the-name.gif)
 
-![Prisoners recall demo](docs/prisoners.gif)
 
 Type a scene you half-remember. Or a messy filter dump. You get ranked titles from *your* catalog, plus a straight answer for why each one showed up.
 
