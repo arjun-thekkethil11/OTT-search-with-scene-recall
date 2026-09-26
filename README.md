@@ -1,12 +1,16 @@
 # OpenShelf
 
-OTT search that actually listens.
+OTT search that actually listens. Real AI plot knowledge, not keyword guessing.
+
+<video src="docs/forgot-the-name.mp4" controls width="720"></video>
+
+<video src="docs/prisoners.mp4" controls width="720"></video>
 
 Type a scene you half-remember. Or a messy filter dump. You get ranked titles from *your* catalog, plus a straight answer for why each one showed up.
 
 ## Forgot the name?
 
-No title. No actor. Just the bit stuck in your head.
+No title. No actor. Just the bit stuck in your head. An LLM that actually knows the plot, not just a logline, does the guessing.
 
 > "a guy fakes being blind and it turns out he witnessed a murder"
 > → **Andhadhun**, 98%, one sentence why.
