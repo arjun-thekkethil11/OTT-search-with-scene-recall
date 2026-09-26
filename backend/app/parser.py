@@ -302,7 +302,6 @@ def parse_query(raw: str, catalog: list[Title] | None = None) -> ParsedQuery:
         value = float(match.group(2))
         imdb_min = value if match.group(1) == ">=" else value + 1e-6
 
-    # "IMDb > 7"
     match = re.search(r"imdb\s*>\s*(\d(?:\.\d)?)", lower)
     if match:
         eat(match)
@@ -424,10 +423,7 @@ def parse_query(raw: str, catalog: list[Title] | None = None) -> ParsedQuery:
             if name not in people_include:
                 people_include.append(name)
 
-    # Real NER pass: catches names in phrasing the hand-written patterns above
-    # don't anticipate (e.g. "something with Tom Hanks", "Mammootty thrillers",
-    # "any Scorsese films"). Runs on the original-cased text since capitalization
-    # is a strong signal for the tagger; falls back silently if spaCy isn't available.
+    # spaCy NER on original casing (capitalization is the signal). Skip if the model is missing.
     if ner_available():
         for name in extract_person_names(text):
             m = re.search(re.escape(name.lower()), lower)

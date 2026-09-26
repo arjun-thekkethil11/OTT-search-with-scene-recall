@@ -1,1 +1,1 @@
-"""OpenShelf — personal OTT search engine."""
+"""OpenShelf."""

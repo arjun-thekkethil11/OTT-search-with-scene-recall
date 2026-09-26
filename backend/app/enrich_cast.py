@@ -12,7 +12,7 @@ from pathlib import Path
 UA = "OpenShelf/0.1 (educational OTT catalog; https://localhost)"
 CATALOG = Path(__file__).resolve().parent / "data" / "catalog.json"
 
-# Credits we already know — used when Wikidata misses, not as the search algorithm.
+# Fallback cast when Wikidata has none.
 OVERRIDES: dict[str, list[str]] = {
     "drishyam-2013": ["Mohanlal", "Meena", "Ansiba Hassan", "Esther Anil"],
     "drishyam-2-ml": ["Mohanlal", "Meena", "Ansiba Hassan"],

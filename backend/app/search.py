@@ -13,13 +13,7 @@ ENGLISH = {"english"}
 
 
 class SemanticIndex:
-    """TF-IDF cosine similarity, blended with real sentence-embedding
-    similarity when the ML model is available. TF-IDF alone only rewards
-    shared vocabulary; embeddings catch paraphrases the parser's keyword
-    matching would otherwise miss (e.g. "moody slow-burn about grief"
-    against an overview that says "quiet elegy for a widowed father").
-    Falls back to pure TF-IDF if the embedding model can't load.
-    """
+    """TF-IDF plus sentence embeddings when available; TF-IDF only if they don't load."""
 
     def __init__(self, titles: list[Title]) -> None:
         self.titles = titles

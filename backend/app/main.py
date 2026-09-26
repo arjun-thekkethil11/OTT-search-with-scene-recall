@@ -11,7 +11,7 @@ from app.parser import parse_query
 from app.search import SemanticIndex, search as run_search
 from app.ai_intent import recall_scene, refine_hits
 
-app = FastAPI(title="OpenShelf", version="0.1.0", description="Personal OTT search engine — catalog first, not another recommender.")
+app = FastAPI(title="OpenShelf", version="0.1.0", description="Personal OTT search.")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,9 +22,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def _warm_models() -> None:
-    # Build the embedding index (and load the NER model) once at boot instead
-    # of on the first incoming search request.
-    _index()
+    _index()  # warm embeddings + NER before the first request
 
 
 @lru_cache(maxsize=1)
@@ -103,7 +101,6 @@ def search_endpoint(body: SearchRequest) -> SearchResponse:
 
 @app.post("/api/recall", response_model=RecallResponse)
 def recall_endpoint(body: SearchRequest) -> RecallResponse:
-    """"I forgot the name but remember this scene" search — see app.ai_intent.recall_scene."""
     titles = load_catalog()
     by_id = {t.id: t for t in titles}
     raw_hits, ai_used = recall_scene(body.query, titles, _index(), limit=body.limit or 6)

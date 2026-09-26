@@ -1,10 +1,4 @@
-"""Real ML layer: sentence embeddings for semantic ranking, NER for name detection.
-
-Both are optional, cached, and fail soft — if the models can't load (no
-internet on first run to fetch weights, etc.) the app falls back to the
-existing TF-IDF + regex behavior. Nothing else in the request path depends on
-this module being available.
-"""
+"""Optional sentence embeddings and spaCy NER. Soft-fail if models can't load."""
 
 from __future__ import annotations
 
@@ -61,12 +55,7 @@ _TITLE_NOISE = re.compile(
 
 
 def extract_person_names(text: str) -> list[str]:
-    """Pull PERSON-entity spans out of free text using spaCy NER.
-
-    This generalizes past the old regex heuristic: it works for arbitrary
-    names in arbitrary phrasing ("something with Tom Hanks", "Mammootty
-    thrillers", "any Scorsese films") without a hand-maintained pattern list.
-    """
+    """PERSON spans from spaCy NER."""
     if not text.strip():
         return []
     nlp = get_nlp()

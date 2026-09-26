@@ -1,22 +1,24 @@
 # OpenShelf
 
-Your own OTT search engine — not another recommendation feed. Describe what you want, get a filtered, ranked, **explained** catalog.
+OTT search that actually listens.
 
-## 🧠 Forgot the name?
+Type a scene you half-remember. Or a messy filter dump. You get ranked titles from *your* catalog, plus a straight answer for why each one showed up.
 
-The main event. Half-remember a scene, a twist, a vibe — no title, no actor — and it matches against what the AI actually knows about each film's plot, not just a one-line blurb.
+## Forgot the name?
+
+No title. No actor. Just the bit stuck in your head.
 
 > "a guy fakes being blind and it turns out he witnessed a murder"
-> → **Andhadhun**, 98% confidence, one honest sentence why.
+> → **Andhadhun**, 98%, one sentence why.
 
-No match in the catalog? It says so — never a fake guess.
+Nothing in the catalog? We say so. We don't invent a winner.
 
-## Also just... search
+## Search like a human
 
-> "90–120 min thriller, non-English, after 2018, IMDb > 7, no horror"
+> "90-120 min thriller, non-English, after 2018, IMDb > 7, no horror"
 > "mohanlal movies" · "movies with a double role" · "triller under 5 imdb"
 
-Typos, messy ratings, actor names, dual-role plots — rules first, AI as backup, catalog always has the final word.
+Typos, actor names, dual roles, weird rating phrasing. Rules first. AI as backup. Catalog has the last word.
 
 ## Run it
 
@@ -32,11 +34,13 @@ cd frontend
 npm install && npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) — Vite proxies `/api` to FastAPI.
+Open [http://localhost:5173](http://localhost:5173). Vite proxies `/api` to FastAPI.
 
 ## AI key (optional)
 
-Copy `backend/.env.example` → `backend/.env` and set `OPENAI_API_KEY`. Defaults to Google's Gemini (free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)); point `OPENAI_BASE_URL`/`OPENAI_MODEL` at OpenAI or any other OpenAI-compatible provider instead. No key → search still works via rules + embeddings, and scene recall falls back to a labeled best-effort guess instead of true plot recall.
+Copy `backend/.env.example` to `backend/.env` and set `OPENAI_API_KEY`. Default is Gemini (free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)). Point `OPENAI_BASE_URL` / `OPENAI_MODEL` at OpenAI or any other compatible provider.
+
+No key? Filter search still works. Scene recall falls back to a labeled best-effort guess.
 
 ## Tests
 

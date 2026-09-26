@@ -1,9 +1,4 @@
-"""Tiny LLM intent layer: interpret messy search text, then Python filters the catalog.
-
-The model never sees full overviews. Parse call = user query + a short digest
-(genres / languages / people names). Optional refine call = a TSV of already
-filtered hits. That's a few hundred tokens per search, not the whole shelf.
-"""
+"""LLM helpers for messy queries and scene recall."""
 
 from __future__ import annotations
 
@@ -57,7 +52,7 @@ def interpret_query(query: str, titles: list[Title]) -> dict:
         "Do not invent titles. Fix typos (triller=Thriller, mammooty=Mammootty). "
         "If the user contradicts themselves ('more than below 5'), use the bound they "
         "clearly meant (below 5 → imdb_max 5). "
-        "Set dual_role true for double/dual role, two characters, two roles — not stunt double. "
+        "Set dual_role true for double/dual role, two characters, two roles, not stunt double. "
         "people_include values must be copied from PEOPLE when a person is asked for. "
         "If dual_role is true, only people in DUAL_ROLE can actually match. "
         "genres must be copied from GENRES. "
@@ -105,20 +100,7 @@ def refine_hits(query: str, hits: list[SearchHit], limit: int) -> list[SearchHit
 def recall_scene(
     query: str, titles: list[Title], index: "SemanticIndex", limit: int = 6
 ) -> tuple[list[dict], bool]:
-    """"I forgot the name but I remember this scene" search.
-
-    Unlike interpret_query/refine_hits (which only ever see short digests), this call
-    sends the model a compact one-line-per-title catalog and explicitly tells it to use
-    its OWN real-world knowledge of each specific film/show — twists, iconic scenes,
-    dialogue — not just the short hint string, to judge whether a vague memory matches.
-    It is only invoked when the user opens this dedicated "remember a scene" flow, not on
-    every keystroke of normal search, so the extra token spend stays a rare, deliberate cost.
-
-    Returns (hits, ai_used). hits are dicts of {id, confidence, why}, ids are always
-    verified against the catalog (no hallucinated titles ever reach the caller). If the
-    AI call itself fails or is unavailable, falls back to embedding/TF-IDF similarity
-    with an honest, capped confidence and ai_used=False so the UI can say so.
-    """
+    """Match a remembered scene to catalog ids. Returns (hits, ai_used)."""
     query = (query or "").strip()
     if not query:
         return [], False
@@ -130,7 +112,7 @@ def recall_scene(
             {
                 "id": t.id,
                 "confidence": int(round(min(max(score, 0.0), 1.0) * 60)),
-                "why": "Closest wording/theme match we could find — no AI plot recall available.",
+                "why": "Closest wording/theme match we could find. No AI plot recall available.",
             }
             for t, score in ranked[:limit]
             if score > 0.05
@@ -145,9 +127,9 @@ def recall_scene(
         rows.append(f"{t.id}|{t.title}|{t.year}|{t.type}|{','.join(t.genres[:2])}|{hint}")
 
     system = (
-        "A user half-remembers a movie/show: a scene, a twist, a vibe, a line — but not the "
+        "A user half-remembers a movie/show: a scene, a twist, a vibe, a line, but not the "
         "title. You get the FULL catalog as rows: id|title|year|type|genres|hint. The hint is "
-        "only a short logline, not the real plot — use your own knowledge of these specific, "
+        "only a short logline, not the real plot. Use your own knowledge of these specific, "
         "real titles (actual scenes, twists, characters, dialogue) to judge matches even when "
         "that detail isn't in the hint. Never propose an id that is not one of the given rows; "
         "if you don't recognize enough titles to judge, say so by returning fewer matches. "
@@ -182,9 +164,7 @@ def recall_scene(
         if len(out) >= limit:
             break
 
-    # An honest "nothing matches" from the model is itself a valid answer (see the app's
-    # established rule: an empty result beats a fabricated near-miss), so we don't fall
-    # back to embeddings just because `out` came back empty here.
+    # Empty matches from the model are a real answer. Do not invent titles via embeddings.
     return out, True
 
 
@@ -221,9 +201,6 @@ def _digest(titles: list[Title]) -> str:
 
 def _chat(system: str, user: str, max_tokens: int, timeout: int = 12) -> dict | None:
     _load_dotenv()
-    # Defaults point at Gemini's OpenAI-compatibility endpoint (this project's
-    # current provider); override OPENAI_BASE_URL/OPENAI_MODEL in .env to use
-    # OpenAI or any other OpenAI-compatible endpoint instead.
     base = os.getenv("OPENAI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/")
     model = os.getenv("OPENAI_MODEL", "gemini-3.8-flash")
     key = os.getenv("OPENAI_API_KEY", "")
@@ -237,9 +214,7 @@ def _chat(system: str, user: str, max_tokens: int, timeout: int = 12) -> dict | 
         ],
     }
     if "generativelanguage.googleapis.com" in base:
-        # Gemini 3's hidden "thinking" tokens count against max_tokens, which
-        # can silently truncate replies to empty text at our small budgets.
-        # Capping effort to "low" keeps enough of the budget for real output.
+        # Gemini thinking tokens count against max_tokens; low effort leaves room for JSON.
         payload["reasoning_effort"] = "low"
     body = json.dumps(payload).encode("utf-8")
     headers = {"Content-Type": "application/json", "User-Agent": "OpenShelf/0.1"}

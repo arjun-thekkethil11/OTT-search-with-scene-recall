@@ -276,7 +276,7 @@ function RecallModal({
           <div className="recall-results">
             {!result.ai_used && (
               <p className="recall-note">
-                AI recall isn't configured on this server — showing the closest thematic matches
+                AI recall isn't configured on this server. Showing closest thematic matches
                 instead of true plot recall.
               </p>
             )}
@@ -525,13 +525,13 @@ function runtimeLabel(t: Title) {
 function chipsFromParsed(p: ParsedQuery): string[] {
   const chips: string[] = [];
   if (p.runtime_min != null || p.runtime_max != null) {
-    chips.push(`${p.runtime_min ?? 0}–${p.runtime_max ?? "∞"} min`);
+    chips.push(`${p.runtime_min ?? 0}-${p.runtime_max ?? "∞"} min`);
   }
   chips.push(...p.genres_include);
   chips.push(...p.genres_exclude.map((g) => `no ${g}`));
   if (p.non_english) chips.push("non-English");
   chips.push(...p.languages_include);
-  if (p.year_min != null || p.year_max != null) chips.push(`${p.year_min ?? "…"}–${p.year_max ?? "now"}`);
+  if (p.year_min != null || p.year_max != null) chips.push(`${p.year_min ?? "…"}-${p.year_max ?? "now"}`);
   if (p.imdb_min != null) chips.push(`IMDb > ${p.imdb_min < 7.01 ? "7" : p.imdb_min.toFixed(1)}`);
   chips.push(...p.countries_include);
   chips.push(...p.platforms_include);
