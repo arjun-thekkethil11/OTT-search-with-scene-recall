@@ -13,7 +13,8 @@ _SPACY_MODEL_NAME = "en_core_web_sm"
 def get_embedder():
     from sentence_transformers import SentenceTransformer
 
-    return SentenceTransformer(_EMBED_MODEL_NAME)
+    # Cached weights only. Hugging Face HEAD checks hang behind intercepting SSL.
+    return SentenceTransformer(_EMBED_MODEL_NAME, local_files_only=True)
 
 
 @lru_cache(maxsize=1)

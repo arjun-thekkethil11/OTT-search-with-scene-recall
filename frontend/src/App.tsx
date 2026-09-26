@@ -88,8 +88,16 @@ export default function App() {
     }
   }
 
+  function openRecall() {
+    setRecallOpen(true);
+    setRecallQuery("");
+    setRecallResult(null);
+    setRecallError(null);
+  }
+
   function closeRecall() {
     setRecallOpen(false);
+    setRecallResult(null);
     setRecallError(null);
   }
 
@@ -137,7 +145,7 @@ export default function App() {
           <button type="button" className="icon-btn" onClick={() => setSearchOpen((v) => !v)} aria-label="Toggle search">
             ⌕
           </button>
-          <button type="button" className="pill-btn" onClick={() => setRecallOpen(true)}>
+          <button type="button" className="pill-btn" onClick={openRecall}>
             Forgot the name?
           </button>
         </div>
