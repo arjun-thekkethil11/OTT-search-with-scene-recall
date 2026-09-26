@@ -18,7 +18,7 @@ Nothing in the catalog? We say so. We don't invent a winner.
 > "90-120 min thriller, non-English, after 2018, IMDb > 7, no horror"
 > "mohanlal movies" · "movies with a double role" · "triller under 5 imdb"
 
-Typos, actor names, dual roles, weird rating phrasing. Rules first. AI as backup. Catalog has the last word.
+Typos, actor names, dual roles, weird rating phrasing. Rules first. AI as backup. 
 
 ## Run it
 
